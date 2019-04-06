@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>CELLS</title>
+    <style type="text/css">
+      #container { position: relative; }
+      #imageView { border: 1px solid #000; }
+    </style>
+  </head>
+  <body>
+
+
+    <div id="container">
+      <canvas id="imageView" width="512" height="512">
+      </canvas>
+    </div>
+
+    <button onclick="upload();">Upload</button>
+
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+    <script type="text/javascript" src="static/draw.js"></script>
+
+
+    <script>
+
+    function upload() {
+        console.log('upload');
+
+        var canvas = document.getElementById('imageView');
+
+        $.post("/upload",
+            {
+                img: canvas.toDataURL()
+            }, function(data) {
+                console.log(data);
+        });
+    }
+
+    </script>
+  </body>
+</html>
+

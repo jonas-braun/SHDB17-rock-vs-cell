@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ROCK vs CELL</title>
+    <style type="text/css">
+      #container { position: relative; }
+      #imageView { border: 1px solid #000; }
+
+
+
+    </style>
+  </head>
+  <body>
+
+    <div class="left">
+
+
+    <div id="container">
+      <canvas id="imageView" width="256" height="256">
+      </canvas>
+    </div>
+
+    <button onclick="upload();">Upload</button>
+
+    <div id="resultContainer">
+
+    </div>
+
+    </div>
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+    <script type="text/javascript" src="draw.js"></script>
+
+
+    <script>
+
+    function upload() {
+        console.log('upload');
+
+        var canvas = document.getElementById('imageView');
+
+          var input_b64 = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "")
+          var xhr = new XMLHttpRequest()
+          xhr.open("POST", "/rocks_export2", true)
+          xhr.setRequestHeader("Content-Type", "image/png")
+          xhr.responseType = "arraybuffer"
+          xhr.timeout = 45000
+
+          xhr.onreadystatechange = () => {
+          if (xhr.readyState == 4) {
+              if (xhr.status == 200) {
+                var output_bin = new Uint8Array(xhr.response)
+                var output_b64 = bin_to_b64(output_bin)
+                var output = new Image()
+                output.src = "data:image\/png;base64," + output_b64
+                output.onload = () => {
+                  // browsers besides chrome need to wait for the image to load
+                  console.log(output)
+                  container = document.getElementById("resultContainer")
+                  container.appendChild(output)
+                  img = bin_to_b64(output);
+                  console.log(img)
+                }
+              }
+          }
+          }
+          xhr.send(b64_to_bin(input_b64))
+    }
+
+
+
+function b64_to_bin(str) {
+  var binstr = atob(str)
+  var bin = new Uint8Array(binstr.length)
+  for (var i = 0; i < binstr.length; i++) {
+    bin[i] = binstr.charCodeAt(i)
+  }
+  return bin
+}
+
+function bin_to_b64(bin) {
+  var parts = []
+  for (var i = 0; i < bin.length; i++) {
+    parts.push(String.fromCharCode(bin[i]))
+  }
+  var binstr = parts.join("")
+  return btoa(binstr)
+}
+
+
+</script>
+
+</body>
+</html>
